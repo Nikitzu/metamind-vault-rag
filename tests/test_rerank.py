@@ -3,14 +3,14 @@
 Intentionally does NOT import the optional ONNX deps (`onnxruntime`,
 `tokenizers`, `huggingface_hub`) - the module must behave gracefully
 when the `[rerank]` extra is absent. That's the whole point of
-`uv tool install metalmind-vault-rag[rerank]` being optional.
+`uv tool install metamind-vault-rag[rerank]` being optional.
 """
 import sys
 from unittest.mock import MagicMock
 
 import pytest
 
-from metalmind_vault_rag import rerank as rerank_mod
+from metamind_vault_rag import rerank as rerank_mod
 
 
 @pytest.fixture(autouse=True)

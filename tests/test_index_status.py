@@ -14,8 +14,8 @@ from http.server import ThreadingHTTPServer
 
 import pytest
 
-from metalmind_vault_rag import doctor, http_server
-from metalmind_vault_rag.index_format import FORMAT_VERSION, IndexStamp, current_stamp, write_stamp
+from metamind_vault_rag import doctor, http_server
+from metamind_vault_rag.index_format import FORMAT_VERSION, IndexStamp, current_stamp, write_stamp
 
 EMBEDDER = "fake-model@4"
 
@@ -81,7 +81,7 @@ class TestDoctorCheck:
         survives inside a disabled branch. Run it."""
         write_stamp(stamped, current_stamp(embedder=EMBEDDER, files=1, chunks=1))
         monkeypatch.setattr(doctor, "check_fts_index", lambda: None)
-        monkeypatch.setattr("sys.argv", ["metalmind-vault-rag-doctor", "--fts"])
+        monkeypatch.setattr("sys.argv", ["metamind-vault-rag-doctor", "--fts"])
 
         doctor.main()
 
@@ -129,7 +129,7 @@ class TestStatusEndpoint:
         assert body["stale"] is False
 
     def test_carries_the_confidence_bands_when_they_exist(self, server, stamped, monkeypatch, tmp_path):
-        from metalmind_vault_rag.calibration import Bands, write_sidecar
+        from metamind_vault_rag.calibration import Bands, write_sidecar
 
         sidecar = tmp_path / "vault.calibration.json"
         write_sidecar(sidecar, Bands(0.7051, 0.648), EMBEDDER, positives_n=150, probes_n=67)

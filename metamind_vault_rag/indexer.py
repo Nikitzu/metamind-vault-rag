@@ -233,9 +233,9 @@ def main() -> None:
         return
     if args and args[0] in {"-h", "--help"}:
         print(
-            "usage: metalmind-vault-rag-indexer                 # stream-rebuild (no query gap)\n"
-            "       metalmind-vault-rag-indexer --paths FILE... # incremental upsert\n"
-            "       metalmind-vault-rag-indexer --wipe          # drop collection + rebuild",
+            "usage: metamind-vault-rag-indexer                 # stream-rebuild (no query gap)\n"
+            "       metamind-vault-rag-indexer --paths FILE... # incremental upsert\n"
+            "       metamind-vault-rag-indexer --wipe          # drop collection + rebuild",
             flush=True,
         )
         return

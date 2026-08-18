@@ -12,8 +12,8 @@ from http.server import ThreadingHTTPServer
 
 import pytest
 
-from metalmind_vault_rag import calibration, http_server, search
-from metalmind_vault_rag.calibration import Bands, write_sidecar
+from metamind_vault_rag import calibration, http_server, search
+from metamind_vault_rag.calibration import Bands, write_sidecar
 
 EMBEDDER = "fake-model@4"
 

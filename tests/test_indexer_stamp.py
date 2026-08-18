@@ -10,8 +10,8 @@ import sqlite3
 
 import pytest
 
-from metalmind_vault_rag import indexer
-from metalmind_vault_rag.index_format import FORMAT_VERSION, read_stamp
+from metamind_vault_rag import indexer
+from metamind_vault_rag.index_format import FORMAT_VERSION, read_stamp
 
 
 class FakeStore:

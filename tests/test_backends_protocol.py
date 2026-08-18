@@ -18,8 +18,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from metalmind_vault_rag.backends import make_backend
-from metalmind_vault_rag.backends.fastembed_backend import DEFAULT_MODEL, FastEmbedBackend
+from metamind_vault_rag.backends import make_backend
+from metamind_vault_rag.backends.fastembed_backend import DEFAULT_MODEL, FastEmbedBackend
 
 
 # -----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ def test_make_backend_rejects_unknown_value(monkeypatch: pytest.MonkeyPatch) -> 
 def test_cache_dir_defaults_to_metalmind_home(monkeypatch: pytest.MonkeyPatch) -> None:
     """Model cache must live under ~/.metalmind, not the system temp dir -
     macOS purges temp files, leaving a broken half-cache (NO_SUCHFILE)."""
-    from metalmind_vault_rag.backends.fastembed_backend import resolve_cache_dir
+    from metamind_vault_rag.backends.fastembed_backend import resolve_cache_dir
 
     monkeypatch.delenv("FASTEMBED_CACHE_PATH", raising=False)
     monkeypatch.setenv("HOME", "/home/tester")
@@ -118,7 +118,7 @@ def test_cache_dir_defaults_to_metalmind_home(monkeypatch: pytest.MonkeyPatch) -
 
 
 def test_cache_dir_env_override_wins(monkeypatch: pytest.MonkeyPatch) -> None:
-    from metalmind_vault_rag.backends.fastembed_backend import resolve_cache_dir
+    from metamind_vault_rag.backends.fastembed_backend import resolve_cache_dir
 
     monkeypatch.setenv("FASTEMBED_CACHE_PATH", "/custom/cache")
     assert resolve_cache_dir() == "/custom/cache"

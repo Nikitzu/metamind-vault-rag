@@ -7,7 +7,7 @@ queries keep the balanced defaults.
 
 import pytest
 
-from metalmind_vault_rag import search as s
+from metamind_vault_rag import search as s
 
 
 class TestExactSignal:

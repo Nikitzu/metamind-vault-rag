@@ -96,7 +96,7 @@ def _load() -> tuple[Any, Any] | None:
         _FAILED = True
         print(
             f"metalmind: --rerank requested but ONNX deps missing ({e}). "
-            "Install with `uv tool install metalmind-vault-rag[rerank]` or drop the flag.",
+            "Install with `uv tool install metamind-vault-rag[rerank]` or drop the flag.",
             file=sys.stderr,
         )
         return None

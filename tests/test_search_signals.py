@@ -9,7 +9,7 @@ caller can recover that lost magnitude. They are diagnostics only and must
 never change the fused ordering.
 """
 
-from metalmind_vault_rag.search import _rrf_merge
+from metamind_vault_rag.search import _rrf_merge
 
 
 def hit(file: str, heading: str = "h", score: float = 1.0) -> dict:
@@ -42,7 +42,7 @@ class TestPerLegScores:
         assert by_file["b.md"]["kw_score"] == 11.4
 
     def test_best_ranked_occurrence_wins_within_a_leg(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "MAX_CHUNKS_PER_FILE", 0)
 

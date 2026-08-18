@@ -16,7 +16,7 @@ import re
 
 import pytest
 
-from metalmind_vault_rag.calibration import (
+from metamind_vault_rag.calibration import (
     MIN_POSITIVE_SAMPLES,
     NEAR_MISS_COUNT,
     NEAR_MISS_HIGH_TOLERANCE,

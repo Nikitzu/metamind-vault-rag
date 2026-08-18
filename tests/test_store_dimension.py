@@ -15,7 +15,7 @@ this package.
 
 import pytest
 
-from metalmind_vault_rag.stores.sqlite_vec_store import SqliteVecStore
+from metamind_vault_rag.stores.sqlite_vec_store import SqliteVecStore
 
 
 class TestStoreDimension:
@@ -43,7 +43,7 @@ class TestStoreDimension:
     def test_store_and_backend_agree_without_any_env_var(self, monkeypatch, tmp_path):
         """The property that was violated. Whatever the model, the width the
         store builds its index at is the width the backend emits."""
-        from metalmind_vault_rag.backends.fastembed_backend import FastEmbedBackend
+        from metamind_vault_rag.backends.fastembed_backend import FastEmbedBackend
 
         for model, expected in (
             ("BAAI/bge-small-en-v1.5", 384),

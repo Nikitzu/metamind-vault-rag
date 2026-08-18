@@ -1,4 +1,4 @@
-"""Smoke tests for the metalmind-vault-rag package.
+"""Smoke tests for the metamind-vault-rag package.
 
 Run from the package root: `uv run --extra dev pytest` (or equivalent).
 These cover: imports work, the HTTP server handles requests correctly with
@@ -14,7 +14,7 @@ from unittest.mock import patch
 import pytest
 
 # Import-time checks - fail fast if any module has a syntax/import error.
-from metalmind_vault_rag import (  # noqa: F401
+from metamind_vault_rag import (  # noqa: F401
     core,
     doctor,
     http_server,
@@ -164,7 +164,7 @@ def test_health_identifies_the_build_it_is_serving() -> None:
         server_obj.shutdown()
         server_obj.server_close()
 
-    import metalmind_vault_rag
+    import metamind_vault_rag
 
     assert body["version"]
-    assert body["module"] == str(pathlib.Path(metalmind_vault_rag.__file__).parent)
+    assert body["module"] == str(pathlib.Path(metamind_vault_rag.__file__).parent)

@@ -19,7 +19,7 @@ leaves every other class untouched. Aggregate hit@1 is 55% against 54%, so the
 cautious version also happens to be the better one.
 """
 
-from metalmind_vault_rag.search import _apply_temporal_order, _temporal_signal
+from metamind_vault_rag.search import _apply_temporal_order, _temporal_signal
 
 
 def hit(file: str, score: float = 1.0) -> dict:
@@ -72,7 +72,7 @@ class TestSignal:
 
 class TestOrdering:
     def test_recent_intent_puts_the_newest_first(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,
@@ -84,7 +84,7 @@ class TestOrdering:
         assert files(_apply_temporal_order(hits, 1)) == ["b.md", "a.md"]
 
     def test_older_intent_puts_the_oldest_first(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,
@@ -96,7 +96,7 @@ class TestOrdering:
         assert files(_apply_temporal_order(hits, -1)) == ["a.md", "b.md"]
 
     def test_no_signal_is_a_no_op(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "_note_dates", lambda: {"a.md": "2026-01-01"})
         hits = [hit("a.md", 0.9), hit("b.md", 0.5)]
@@ -113,7 +113,7 @@ class TestOrdering:
         match is decisive by that measure, so the guarantee this test names was
         not being delivered on the default path. Decisiveness is now rank
         distance, which both paths express the same way."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,
@@ -129,7 +129,7 @@ class TestOrdering:
         assert out.index("strong.md") < out.index("weak.md")
 
     def test_undated_notes_are_treated_as_the_middle(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,
@@ -143,7 +143,7 @@ class TestOrdering:
         assert out[0] == "new.md" and out[-1] == "old.md"
 
     def test_fewer_than_two_dates_leaves_order_alone(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "_note_dates", lambda: {"a.md": "2026-01-01"})
         hits = [hit("a.md", 0.5), hit("b.md", 0.9)]
@@ -151,7 +151,7 @@ class TestOrdering:
         assert files(_apply_temporal_order(hits, 1)) == ["a.md", "b.md"]
 
     def test_scores_are_not_rewritten(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search, "_note_dates", lambda: {"a.md": "2026-01-01", "b.md": "2026-08-01"}
@@ -163,7 +163,7 @@ class TestOrdering:
 
 class TestWiredIntoSearch:
     def test_a_temporal_query_reorders_by_date(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         ordered = [hit("Plans/old.md", 0.9), hit("Plans/new.md", 0.5)]
         monkeypatch.setattr(search, "_semantic_search", lambda q, k: ordered)
@@ -179,7 +179,7 @@ class TestWiredIntoSearch:
         assert files(search.search_vault("the most recent plan", k=5))[0] == "Plans/new.md"
 
     def test_an_ordinary_query_keeps_relevance_order(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         ordered = [hit("Plans/old.md", 0.9), hit("Plans/new.md", 0.5)]
         monkeypatch.setattr(search, "_semantic_search", lambda q, k: ordered)
@@ -197,7 +197,7 @@ class TestWiredIntoSearch:
 
 class TestDateExtraction:
     def test_frontmatter_date_is_read(self, tmp_path, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         note = tmp_path / "a.md"
         note.write_text("---\ncreated: 2026-01-05\nupdated: 2026-07-09\n---\n# a\n")
@@ -209,7 +209,7 @@ class TestDateExtraction:
         assert search._note_dates()["a.md"] == "2026-07-09"
 
     def test_filename_date_is_the_fallback(self, tmp_path, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         note = tmp_path / "2026-03-04-plan.md"
         note.write_text("# no frontmatter\n")
@@ -234,7 +234,7 @@ class TestScaleInvariance:
     """
 
     def _dates(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,
@@ -286,7 +286,7 @@ class TestDisplacementReach:
     """
 
     def test_a_date_can_lift_a_hit_four_places(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(
             search,

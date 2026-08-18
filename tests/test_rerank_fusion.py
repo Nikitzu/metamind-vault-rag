@@ -20,7 +20,7 @@ matter what the reranker is shown.
 
 import pytest
 
-from metalmind_vault_rag import rerank
+from metamind_vault_rag import rerank
 
 
 def hit(file: str, score: float = 1.0, text: str = "body") -> dict:

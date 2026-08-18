@@ -11,7 +11,7 @@ import time
 
 import pytest
 
-from metalmind_vault_rag import doctor, recall_log
+from metamind_vault_rag import doctor, recall_log
 
 
 def write_note(vault, rel, age_days):

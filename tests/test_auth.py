@@ -13,7 +13,7 @@ from http.server import ThreadingHTTPServer
 
 import pytest
 
-from metalmind_vault_rag import auth, http_server
+from metamind_vault_rag import auth, http_server
 
 
 @pytest.fixture

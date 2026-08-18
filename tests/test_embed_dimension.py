@@ -12,7 +12,7 @@ who passes the wrong number is not expressing a preference.
 
 import pytest
 
-from metalmind_vault_rag.backends.fastembed_backend import (
+from metamind_vault_rag.backends.fastembed_backend import (
     DEFAULT_DIM,
     DEFAULT_MODEL,
     FastEmbedBackend,

@@ -139,7 +139,7 @@ def check_rerank() -> None:
     print("\n== Rerank healthcheck ==")
     if not rerank_mod.is_dep_available():
         print("  [rerank] extra not installed - hybrid+rerank mode is unavailable.")
-        print(f"  Fix: uv tool install --force --reinstall 'metalmind-vault-rag[rerank]'")
+        print(f"  Fix: uv tool install --force --reinstall 'metamind-vault-rag[rerank]'")
         return
     hits = [
         {"file": "test-a.md", "heading": "(root)", "score": 0.5, "text": "semantic search recall quality"},
@@ -157,7 +157,7 @@ def check_rerank() -> None:
     if top.get("prev_score") is None:
         print("  WARN: reranker returned hits without prev_score - silent fallback.")
         print("        This usually means transformers ≥ 5 is installed alongside FlagEmbedding 1.3.")
-        print("        Fix: uv tool install --force --reinstall 'metalmind-vault-rag[rerank]'")
+        print("        Fix: uv tool install --force --reinstall 'metamind-vault-rag[rerank]'")
         return
     print(f"  OK - cross-encoder ran and was fused with the retrieval ranking (incoming score {top['prev_score']} → fused {top['score']})")
 

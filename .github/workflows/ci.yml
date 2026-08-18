@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }} · ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Run the suite
+        run: uv run --python ${{ matrix.python }} --extra dev pytest -q
+
+  rerank-canary:
+    name: Rerank compatibility
+    if: github.event_name == 'push'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install the rerank extra
+        run: uv sync --extra dev --extra rerank
+      - name: Run the canary
+        run: uv run --extra dev --extra rerank pytest tests/test_rerank_compat.py -v
+
+  build:
+    name: Build and check metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv build
+      - run: uv run --with twine twine check dist/*

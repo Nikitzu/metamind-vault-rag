@@ -8,7 +8,7 @@ History is never hidden - only re-ranked and annotated.
 
 import os
 
-from metalmind_vault_rag.search import _annotate_superseded, _rrf_merge
+from metamind_vault_rag.search import _annotate_superseded, _rrf_merge
 
 
 def hit(file: str, heading: str = "h", score: float = 1.0) -> dict:
@@ -75,12 +75,12 @@ class TestAnnotation:
 
 class TestEnvFloat:
     def test_valid_value_clamped_to_range(self):
-        from metalmind_vault_rag.search import _env_float
+        from metamind_vault_rag.search import _env_float
 
         assert _env_float("MM_TEST_ABSENT", 0.4, 0.0, 1.0) == 0.4
 
     def test_garbage_nan_and_out_of_range_fall_back(self, monkeypatch):
-        from metalmind_vault_rag.search import _env_float
+        from metamind_vault_rag.search import _env_float
 
         monkeypatch.setenv("MM_TEST_VAL", "abc")
         assert _env_float("MM_TEST_VAL", 0.4, 0.0, 1.0) == 0.4
@@ -94,7 +94,7 @@ class TestEnvFloat:
 
 class TestEnvOverride:
     def test_penalty_constant_drives_multiplier(self, monkeypatch):
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.search as s
 
         monkeypatch.setattr(s, "SUPERSEDE_PENALTY", 0.5)
         plain = _rrf_merge([[hit("Plans/a.md")]], k=1)[0]["score"]
@@ -107,8 +107,8 @@ class TestEnvOverride:
 
 class TestSupersedeIndex:
     def test_map_built_from_frontmatter(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Plans").mkdir()
         (tmp_path / "Plans" / "old.md").write_text(
@@ -127,8 +127,8 @@ class TestSupersedeIndex:
         assert smap == {"Plans/old.md": "new"}
 
     def test_archived_superseded_note_stays_in_map(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Archive").mkdir()
         (tmp_path / "Archive" / "old.md").write_text(
@@ -142,8 +142,8 @@ class TestSupersedeIndex:
         assert s._supersede_index() == {"Archive/old.md": "new"}
 
     def test_quoted_pointer_and_next_line_status_handled(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Plans").mkdir()
         (tmp_path / "Plans" / "quoted.md").write_text(
@@ -160,8 +160,8 @@ class TestSupersedeIndex:
         assert s._supersede_index() == {"Plans/quoted.md": "new-note"}
 
     def test_cache_hit_skips_file_reads(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Plans").mkdir()
         (tmp_path / "Plans" / "a.md").write_text(
@@ -184,8 +184,8 @@ class TestSupersedeIndex:
         assert opens == []
 
     def test_frontmatter_larger_than_the_head_read_is_still_seen(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Plans").mkdir()
         filler = "\n".join(f'tag_{i}: "{"x" * 40}"' for i in range(300))
@@ -200,8 +200,8 @@ class TestSupersedeIndex:
         assert s._supersede_index() == {"Plans/big.md": "successor"}
 
     def test_cache_invalidates_on_vault_change(self, tmp_path, monkeypatch):
-        import metalmind_vault_rag.core as core
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.core as core
+        import metamind_vault_rag.search as s
 
         (tmp_path / "Plans").mkdir()
         note = tmp_path / "Plans" / "old.md"
@@ -226,7 +226,7 @@ class TestSearchVaultWiring:
     also covers the both-paths payload requirement."""
 
     def _wire(self, monkeypatch, smap):
-        import metalmind_vault_rag.search as s
+        import metamind_vault_rag.search as s
 
         sem = [hit("Plans/old.md"), hit("Plans/new.md")]
         kw = [hit("Plans/new.md"), hit("Plans/old.md")]

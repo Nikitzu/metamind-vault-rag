@@ -57,17 +57,17 @@ def _health() -> dict:
     import importlib.metadata
     import pathlib as _pathlib
 
-    import metalmind_vault_rag
+    import metamind_vault_rag
 
     try:
-        version = importlib.metadata.version("metalmind-vault-rag")
+        version = importlib.metadata.version("metamind-vault-rag")
     except importlib.metadata.PackageNotFoundError:
         version = "unknown"
     return {
         "ok": True,
-        "service": "metalmind-vault-rag",
+        "service": "metamind-vault-rag",
         "version": version,
-        "module": str(_pathlib.Path(metalmind_vault_rag.__file__).parent),
+        "module": str(_pathlib.Path(metamind_vault_rag.__file__).parent),
     }
 
 

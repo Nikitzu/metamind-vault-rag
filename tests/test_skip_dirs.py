@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from pathlib import Path, PurePath
 
-from metalmind_vault_rag.core import SKIP_DIRS, in_skip_dir
-from metalmind_vault_rag.watcher import _md_change
+from metamind_vault_rag.core import SKIP_DIRS, in_skip_dir
+from metamind_vault_rag.watcher import _md_change
 
 
 def test_skip_dirs_cover_trash() -> None:

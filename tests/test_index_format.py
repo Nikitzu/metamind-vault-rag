@@ -13,7 +13,7 @@ import json
 
 import pytest
 
-from metalmind_vault_rag.index_format import (
+from metamind_vault_rag.index_format import (
     FORMAT_VERSION,
     IndexStamp,
     current_stamp,
@@ -165,7 +165,7 @@ class TestStampPath:
         assert stamp_path("vault").parent.name == ".metalmind"
 
     def test_does_not_collide_with_the_calibration_sidecar(self):
-        from metalmind_vault_rag.calibration import sidecar_path
+        from metamind_vault_rag.calibration import sidecar_path
 
         assert stamp_path("vault") != sidecar_path("vault")
 

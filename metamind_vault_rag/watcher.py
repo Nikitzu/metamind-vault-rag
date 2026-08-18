@@ -147,7 +147,7 @@ def _maybe_backfill() -> None:
     except Exception as e:
         print(
             f"backfill failed: {e}; recall will be degraded until you run "
-            f"`metalmind-vault-rag-indexer`",
+            f"`metamind-vault-rag-indexer`",
             flush=True,
         )
 

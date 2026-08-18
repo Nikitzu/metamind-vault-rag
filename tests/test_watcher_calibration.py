@@ -10,8 +10,8 @@ the minutes a rebuild would.
 
 import pytest
 
-from metalmind_vault_rag import watcher
-from metalmind_vault_rag.calibration import Bands, write_sidecar
+from metamind_vault_rag import watcher
+from metamind_vault_rag.calibration import Bands, write_sidecar
 
 EMBEDDER = "fake-model@4"
 

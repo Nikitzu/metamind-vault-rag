@@ -10,7 +10,7 @@ import importlib
 
 import pytest
 
-from metalmind_vault_rag import search
+from metamind_vault_rag import search
 
 
 def hits(*scores: float) -> list[dict]:

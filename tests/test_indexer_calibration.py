@@ -10,7 +10,7 @@ import sqlite3
 
 import pytest
 
-from metalmind_vault_rag import indexer
+from metamind_vault_rag import indexer
 
 
 class FakeStore:

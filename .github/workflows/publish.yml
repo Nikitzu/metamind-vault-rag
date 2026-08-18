@@ -1,0 +1,65 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build and check only, do not publish'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Read the declared version
+        id: version
+        run: echo "value=$(grep -m1 '^version' pyproject.toml | cut -d'"' -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the tag matches the declared version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$TAG" != "${{ steps.version.outputs.value }}" ]; then
+            echo "::error::tag $TAG does not match pyproject version ${{ steps.version.outputs.value }}"
+            exit 1
+          fi
+
+      - name: Verify the version is not already published
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.value }}"
+          CODE="$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://pypi.org/pypi/metamind-vault-rag/${VERSION}/json")"
+          if [ "$CODE" = "200" ]; then
+            echo "::error::version ${VERSION} is already on PyPI. A published version cannot be replaced."
+            exit 1
+          fi
+          echo "::notice::${VERSION} is unpublished (HTTP ${CODE})"
+
+      - name: Run the suite
+        run: uv run --extra dev pytest -q
+
+      - name: Build
+        run: uv build
+
+      - name: Check distribution metadata
+        run: uv run --with twine twine check dist/*
+
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/') && inputs.dry_run != true
+        run: uv publish --trusted-publishing always

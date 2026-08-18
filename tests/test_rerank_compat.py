@@ -21,7 +21,7 @@ import importlib.util
 
 import pytest
 
-from metalmind_vault_rag import rerank
+from metamind_vault_rag import rerank
 
 
 _RERANK_NOT_INSTALLED = not rerank.is_dep_available()

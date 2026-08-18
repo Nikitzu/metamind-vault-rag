@@ -17,7 +17,7 @@ against 35% for the default. Nothing anywhere said a word.
 
 import pytest
 
-from metalmind_vault_rag.backends.fastembed_backend import FastEmbedBackend
+from metamind_vault_rag.backends.fastembed_backend import FastEmbedBackend
 
 
 class FakeModel:
@@ -111,7 +111,7 @@ class TestSearchUsesTheQueryPath:
     def test_search_embeds_the_query_as_a_query(self, monkeypatch):
         """The wiring, not the backend. `_semantic_search` embedding the query
         through the document path is the whole defect."""
-        from metalmind_vault_rag import core, search
+        from metamind_vault_rag import core, search
 
         seen: list[str] = []
 

@@ -16,8 +16,8 @@ import pathlib
 
 import pytest
 
-from metalmind_vault_rag.stores import VectorHit, VectorPoint
-from metalmind_vault_rag.stores.sqlite_vec_store import SqliteVecStore
+from metamind_vault_rag.stores import VectorHit, VectorPoint
+from metamind_vault_rag.stores.sqlite_vec_store import SqliteVecStore
 
 
 def _sqlite_vec_factory(tmp_path: pathlib.Path) -> SqliteVecStore:

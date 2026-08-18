@@ -11,7 +11,7 @@ loops forever, so every chunk must contain at least one segment that is new.
 
 import pytest
 
-from metalmind_vault_rag.core import chunk_markdown, split_section
+from metamind_vault_rag.core import chunk_markdown, split_section
 
 SENTENCE = "This sentence carries roughly sixty characters of ordinary prose."
 
@@ -142,7 +142,7 @@ class TestOversizeCeiling:
         leaves everything past the limit unindexed. A base64 blob or a wide
         table has no boundary to split on, and there the old character cut is
         the lesser harm."""
-        from metalmind_vault_rag.core import MAX_CHUNK_CHARS
+        from metamind_vault_rag.core import MAX_CHUNK_CHARS
 
         blob = "x" * (MAX_CHUNK_CHARS * 2 + 100)
 

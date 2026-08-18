@@ -13,7 +13,7 @@ retrieval worse and the bench would show it without saying why.
 
 import pytest
 
-from metalmind_vault_rag.search import _rrf_merge
+from metamind_vault_rag.search import _rrf_merge
 
 LABELS = ["sem", "kw"]
 
@@ -32,7 +32,7 @@ class TestChunksAreDistinct:
 
     @pytest.fixture(autouse=True)
     def uncapped(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "MAX_CHUNKS_PER_FILE", 0)
 
@@ -111,12 +111,12 @@ class TestIdentityToggle:
 
     @pytest.fixture(autouse=True)
     def uncapped(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "MAX_CHUNKS_PER_FILE", 0)
 
     def test_disabled_identity_collapses_chunks_of_one_section(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "CHUNK_IDENTITY", False)
         sem = [hit(text="first", chunk_idx=0), hit(text="second", chunk_idx=1)]
@@ -133,7 +133,7 @@ class TestIdentityToggle:
         assert len(merged) == 2
 
     def test_disabling_identity_does_not_disturb_distinct_sections(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "CHUNK_IDENTITY", False)
         sem = [
@@ -153,7 +153,7 @@ class TestNeighboursFromIndex:
         unambiguous."""
         import sqlite3
 
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         conn = sqlite3.connect(":memory:")
         conn.execute("CREATE TABLE chunks (file, heading, chunk_idx, text)")
@@ -177,7 +177,7 @@ class TestNeighboursFromIndex:
 
 class TestBothLegsReportPosition:
     def test_the_indexer_stores_the_chunk_position(self, monkeypatch):
-        from metalmind_vault_rag import indexer
+        from metamind_vault_rag import indexer
 
         monkeypatch.setattr(
             indexer, "embedding_backend", lambda: type("B", (), {"embed": lambda s, t: [[0.0]] * len(t)})()
@@ -190,7 +190,7 @@ class TestBothLegsReportPosition:
     def test_the_keyword_leg_reports_the_chunk_position(self, monkeypatch):
         import sqlite3
 
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         conn = sqlite3.connect(":memory:")
         conn.execute("CREATE VIRTUAL TABLE chunks USING fts5(file, heading, chunk_idx, text)")
@@ -234,7 +234,7 @@ class TestPerFileCap:
         the cap reached neither. Chunk-level identity made that visible: on
         recall-v0 at 500 and 1000 notes, semantic-only hit@5 fell 10 points
         because one note's chunks took slots that distinct notes used to hold."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         chunks = [hit(text=f"c{i}", score=1.0 - i / 10, chunk_idx=i) for i in range(4)]
         chunks.append(hit(file="b.md", text="b0", score=0.5, chunk_idx=0))
@@ -250,7 +250,7 @@ class TestPerFileCap:
     def test_a_single_leg_still_fills_k_when_notes_are_distinct(self, monkeypatch):
         """Capping after a shallow fetch would silently shorten every result
         set, so the leg has to overfetch first."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         many = [hit(file=f"n{i}.md", text=f"t{i}", score=1.0 - i / 100) for i in range(30)]
         monkeypatch.setattr(search, "_semantic_search", lambda q, k: many[:k])
@@ -261,7 +261,7 @@ class TestPerFileCap:
         assert len(hits) == 5
 
     def test_the_cap_can_be_turned_off(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         monkeypatch.setattr(search, "MAX_CHUNKS_PER_FILE", 0)
         sem = [hit(text=f"c{i}", score=1.0 - i / 10, chunk_idx=i) for i in range(4)]

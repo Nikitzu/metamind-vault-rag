@@ -12,8 +12,8 @@ helps if the index it is compared against carries a version at all.
 
 import pytest
 
-from metalmind_vault_rag import watcher
-from metalmind_vault_rag.index_format import FORMAT_VERSION, IndexStamp, current_stamp, read_stamp, write_stamp
+from metamind_vault_rag import watcher
+from metamind_vault_rag.index_format import FORMAT_VERSION, IndexStamp, current_stamp, read_stamp, write_stamp
 
 EMBEDDER = "fake-model@4"
 

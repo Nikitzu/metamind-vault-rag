@@ -14,7 +14,7 @@ ranks above its predecessor. Ordering among everything else is untouched.
 
 import pytest
 
-from metalmind_vault_rag.search import _enforce_supersede_order
+from metamind_vault_rag.search import _enforce_supersede_order
 
 
 def hit(file: str, score: float = 1.0) -> dict:
@@ -134,7 +134,7 @@ class TestWiredIntoSearch:
 
     @pytest.fixture(autouse=True)
     def stub_legs(self, monkeypatch):
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         ordered = [hit("Plans/old.md", score=0.9), hit("Plans/new.md", score=0.1)]
         monkeypatch.setattr(search, "_semantic_search", lambda q, k: ordered)
@@ -148,7 +148,7 @@ class TestWiredIntoSearch:
         the point: fusion never needed it, which is why hybrid scored 80% on the
         bench while reranking scored 55%. Kept as a regression guard on the
         property both paths must hold."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         hits = search.search_vault("q", k=5)
 
@@ -158,7 +158,7 @@ class TestWiredIntoSearch:
         """The cross-encoder is stubbed to prefer the superseded note, which is
         what it does in practice: that note is usually the longer and more
         on-topic document."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         def fake_rerank(query, hits, k, penalties=None):
             ranked = sorted(hits, key=lambda h: 0 if h["file"] == "Plans/old.md" else 1)
@@ -173,7 +173,7 @@ class TestWiredIntoSearch:
     def test_rerank_sees_every_candidate_before_truncation(self, monkeypatch):
         """Truncating to k before the constraint runs would hide a successor
         sitting just outside the window, which is where it often sits."""
-        from metalmind_vault_rag import search
+        from metamind_vault_rag import search
 
         seen = {}
 

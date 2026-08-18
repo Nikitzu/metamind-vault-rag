@@ -5,7 +5,7 @@ notes with comparable relevance. Fusion downweights them: 0.4x for Archive/,
 0.7x for Inbox/, 1.0x everywhere else.
 """
 
-from metalmind_vault_rag.search import _folder_multiplier, _rrf_merge
+from metamind_vault_rag.search import _folder_multiplier, _rrf_merge
 
 
 def hit(file: str, heading: str = "h", score: float = 1.0) -> dict:

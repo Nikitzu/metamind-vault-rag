@@ -9,7 +9,7 @@ Only the embedded string changes. Stored text, FTS rows and snippets stay the
 text a person wrote, so neighbours and output are untouched.
 """
 
-from metalmind_vault_rag.core import embed_text
+from metamind_vault_rag.core import embed_text
 
 
 class TestContext:
@@ -76,7 +76,7 @@ class TestWiring:
     def test_the_indexer_embeds_context_but_stores_the_bare_text(self, monkeypatch):
         """The seam this whole change lives on. Embedding context while storing
         it too would change every snippet and break neighbour lookups."""
-        from metalmind_vault_rag import indexer
+        from metamind_vault_rag import indexer
 
         seen: list[str] = []
 
@@ -98,7 +98,7 @@ class TestContextToggle:
         """An A/B switch for the preference regression. The stamp descriptor
         follows it, so an index built with the prefix off does not claim to
         carry it."""
-        from metalmind_vault_rag import core
+        from metamind_vault_rag import core
 
         monkeypatch.setattr(core, "EMBED_CONTEXT", False)
 

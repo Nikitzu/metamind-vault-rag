@@ -10,7 +10,7 @@ import sqlite3
 
 import pytest
 
-from metalmind_vault_rag import core, sqlite_util
+from metamind_vault_rag import core, sqlite_util
 
 
 @pytest.fixture
