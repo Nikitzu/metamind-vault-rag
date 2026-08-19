@@ -79,24 +79,24 @@ class VectorStore(Protocol):
 def make_store() -> VectorStore:
     """Build the sqlite-vec store.
 
-    `METALMIND_BACKEND=legacy` selected a Qdrant server until v0.16.0.
+    `VAULT_BACKEND=legacy` selected a Qdrant server until v0.16.0.
     The variable is still read so anyone carrying it in a shell profile
     gets an explanation rather than silently running on a store they did
     not choose.
     """
-    backend = os.environ.get("METALMIND_BACKEND", "embedded").lower()
+    backend = os.environ.get("VAULT_BACKEND", "embedded").lower()
     if backend == "legacy":
         raise ValueError(
-            "METALMIND_BACKEND=legacy selected the Qdrant backend, removed in "
+            "VAULT_BACKEND=legacy selected the Qdrant backend, removed in "
             "v0.16.0. Unset the variable to use the embedded sqlite-vec store, "
-            "then run `metalmind uninstall` to drop the Docker containers and "
+            "then remove the Docker containers and "
             "volumes it left behind."
         )
     if backend == "embedded":
         from .sqlite_vec_store import SqliteVecStore  # type: ignore[attr-defined]
 
         return SqliteVecStore()
-    raise ValueError(f"unknown METALMIND_BACKEND={backend!r}; valid: 'embedded'")
+    raise ValueError(f"unknown VAULT_BACKEND={backend!r}; valid: 'embedded'")
 
 
 __all__ = ["VectorPoint", "VectorHit", "VectorStore", "make_store"]

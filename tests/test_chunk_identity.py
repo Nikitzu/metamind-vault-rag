@@ -104,7 +104,7 @@ class TestLegacyIndexes:
 
 
 class TestIdentityToggle:
-    """`METALMIND_CHUNK_IDENTITY=0` reproduces pre-format-2 fusion against a
+    """`VAULT_CHUNK_IDENTITY=0` reproduces pre-format-2 fusion against a
     current index, so the arc's open question can be measured without a rebuild.
     It has to reach the collapse itself, not merely read the variable, or a run
     under the toggle would silently measure the shipped behaviour."""

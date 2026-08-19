@@ -82,7 +82,7 @@ class TestStalenessReporting:
 
         watcher._maybe_stamp_index()
 
-        assert "index rebuild" in capsys.readouterr().out
+        assert "rebuild the index" in capsys.readouterr().out.lower()
 
     def test_a_stale_index_is_not_silently_restamped(self, stubbed):
         """Rewriting the stamp would erase the only evidence that the index

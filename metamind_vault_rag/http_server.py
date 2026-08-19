@@ -1,5 +1,5 @@
 """Loopback HTTP recall endpoint. Co-hosted inside the watcher process so that
-`metalmind tap copper` can hit a long-running server instead of spawning a new
+A client can hit a long-running server instead of spawning a new
 Python MCP every call. Bound to 127.0.0.1 only - nothing leaves the machine."""
 import json
 import os
@@ -22,7 +22,7 @@ _warned_tokenless = False
 def _auth_gate(handler: "_Handler") -> bool:
     """True when the request may proceed. Browser-origin requests are always
     rejected (a web page can fire POSTs at localhost; no CLI sends Origin).
-    Token mismatches reject only under METALMIND_RECALL_REQUIRE_TOKEN=1,
+    Token mismatches reject only under VAULT_RECALL_REQUIRE_TOKEN=1,
     which is the shared-machine setting; otherwise they are served with one
     note per process."""
     global _warned_tokenless
@@ -39,7 +39,7 @@ def _auth_gate(handler: "_Handler") -> bool:
         _warned_tokenless = True
         print(
             f"http recall: serving requests without {auth.HEADER}; "
-            "set METALMIND_RECALL_REQUIRE_TOKEN=1 to require it on a shared machine",
+            "set VAULT_RECALL_REQUIRE_TOKEN=1 to require it on a shared machine",
             flush=True,
         )
     return True
@@ -210,7 +210,7 @@ def serve_forever(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> Threadi
         print(f"http recall: port {port} unavailable ({e}); continuing without HTTP", flush=True)
         return None
     print(f"http recall: listening on http://{host}:{port}", flush=True)
-    thread = threading.Thread(target=server.serve_forever, daemon=True, name="metalmind-http-recall")
+    thread = threading.Thread(target=server.serve_forever, daemon=True, name="vault-rag-http-recall")
     thread.start()
     return server
 

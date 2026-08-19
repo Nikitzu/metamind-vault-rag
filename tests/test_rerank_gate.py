@@ -18,7 +18,7 @@ def hits(*scores: float) -> list[dict]:
 
 
 def reload_with_gate(monkeypatch: pytest.MonkeyPatch, value: str):
-    monkeypatch.setenv("METALMIND_RERANK_GATE", value)
+    monkeypatch.setenv("VAULT_RERANK_GATE", value)
     return importlib.reload(search)
 
 

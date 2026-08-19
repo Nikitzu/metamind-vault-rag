@@ -117,7 +117,7 @@ def stamp_index(files: int, chunks: int) -> None:
             ),
         )
     except Exception as e:
-        print(f"metalmind: could not write the index stamp ({e!r})", flush=True)
+        print(f"vault-rag: could not write the index stamp ({e!r})", flush=True)
 
 
 def run_calibration() -> None:
@@ -153,11 +153,11 @@ def run_calibration() -> None:
             path=sidecar_path(COLLECTION),
         )
     except Exception as e:
-        print(f"metalmind: confidence calibration skipped ({e!r})", flush=True)
+        print(f"vault-rag: confidence calibration skipped ({e!r})", flush=True)
         return
 
     if bands is None:
-        print("metalmind: no confidence bands for this vault.", flush=True)
+        print("vault-rag: no confidence bands for this vault.", flush=True)
     else:
         print(
             f"Calibrated confidence: low {bands.low_edge:.4f}, high {bands.high_edge:.4f}.",

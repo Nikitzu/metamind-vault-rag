@@ -32,7 +32,7 @@ def stubbed(tmp_path, monkeypatch):
     monkeypatch.setattr(watcher, "sidecar_path", lambda collection: path)
     monkeypatch.setattr(watcher, "fts_row_count", lambda: 2970)
     monkeypatch.setattr(watcher, "run_calibration", lambda: calls.append(1))
-    monkeypatch.delenv("METALMIND_CONFIDENCE", raising=False)
+    monkeypatch.delenv("VAULT_CONFIDENCE", raising=False)
     return calls, path
 
 
@@ -70,7 +70,7 @@ class TestStartupCalibration:
 
     def test_skips_when_confidence_is_disabled(self, stubbed, monkeypatch):
         calls, _ = stubbed
-        monkeypatch.setenv("METALMIND_CONFIDENCE", "0")
+        monkeypatch.setenv("VAULT_CONFIDENCE", "0")
 
         watcher._maybe_calibrate()
 

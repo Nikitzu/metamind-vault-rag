@@ -50,7 +50,7 @@ class TestDoctorCheck:
         out = capsys.readouterr().out
 
         assert "WARN" in out
-        assert "index rebuild" in out
+        assert "rebuild the index" in out.lower()
 
     def test_a_stale_index_names_both_formats(self, stamped, capsys):
         write_stamp(stamped, stale_stamp())
@@ -90,7 +90,7 @@ class TestDoctorCheck:
 
 @pytest.fixture
 def server(monkeypatch):
-    monkeypatch.setenv("METALMIND_RECALL_REQUIRE_TOKEN", "0")
+    monkeypatch.setenv("VAULT_RECALL_REQUIRE_TOKEN", "0")
     httpd = ThreadingHTTPServer(("127.0.0.1", 0), http_server._Handler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     yield f"http://127.0.0.1:{httpd.server_address[1]}"

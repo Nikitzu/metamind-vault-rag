@@ -40,13 +40,13 @@ TOP_RANK_BONUS = {1: 0.05, 2: 0.02, 3: 0.02}
 # plausible semantic #1 ties with the correct keyword #1 (each gets the
 # same single-list bonus) and the tie-break is non-deterministic dict
 # order. Tunable via env in case the workload skews semantic.
-KEYWORD_WEIGHT = float(os.environ.get("METALMIND_RRF_KEYWORD_WEIGHT", "1.5"))
-SEMANTIC_WEIGHT = float(os.environ.get("METALMIND_RRF_SEMANTIC_WEIGHT", "1.0"))
+KEYWORD_WEIGHT = float(os.environ.get("VAULT_RRF_KEYWORD_WEIGHT", "1.5"))
+SEMANTIC_WEIGHT = float(os.environ.get("VAULT_RRF_SEMANTIC_WEIGHT", "1.0"))
 
 KEYWORD_WEIGHT_EXACT = float(
-    os.environ.get("METALMIND_RRF_KEYWORD_WEIGHT_EXACT", "2.5")
+    os.environ.get("VAULT_RRF_KEYWORD_WEIGHT_EXACT", "2.5")
 )
-ADAPTIVE_FUSION = os.environ.get("METALMIND_RRF_ADAPTIVE", "1") != "0"
+ADAPTIVE_FUSION = os.environ.get("VAULT_RRF_ADAPTIVE", "1") != "0"
 
 _EXACT_SIGNALS = re.compile(
     "|".join(
@@ -75,7 +75,7 @@ def _fusion_weights(query: str) -> list[float]:
     carrying exact-match tokens are answered better by BM25 than by
     embeddings, which blur literal identifiers into their semantic
     neighbourhood - so the keyword leg gets KEYWORD_WEIGHT_EXACT instead
-    of KEYWORD_WEIGHT. Disable with METALMIND_RRF_ADAPTIVE=0 for A/B
+    of KEYWORD_WEIGHT. Disable with VAULT_RRF_ADAPTIVE=0 for A/B
     benching against the fixed weights."""
     if ADAPTIVE_FUSION and _exact_signal(query):
         return [SEMANTIC_WEIGHT, KEYWORD_WEIGHT_EXACT]
@@ -96,7 +96,7 @@ def _env_float(name: str, default: float, lo: float, hi: float) -> float:
     return min(max(v, lo), hi)
 
 
-SUPERSEDE_PENALTY = _env_float("METALMIND_SUPERSEDE_PENALTY", 0.4, 0.0, 1.0)
+SUPERSEDE_PENALTY = _env_float("VAULT_SUPERSEDE_PENALTY", 0.4, 0.0, 1.0)
 
 _FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---", re.DOTALL)
 _SUPERSEDE_CACHE: dict[str, str] | None = None
@@ -180,12 +180,12 @@ def _annotate_superseded(hits: list[dict], smap: dict[str, str]) -> None:
             h["superseded_by"] = by
 
 
-TEMPORAL_WEIGHT = _env_float("METALMIND_TEMPORAL_WEIGHT", 0.5, 0.0, 1.0)
+TEMPORAL_WEIGHT = _env_float("VAULT_TEMPORAL_WEIGHT", 0.5, 0.0, 1.0)
 
-TEMPORAL_OVERFETCH = max(5, int(os.environ.get("METALMIND_TEMPORAL_OVERFETCH", "20")))
-TEMPORAL_MAX_SHIFT = _env_float("METALMIND_TEMPORAL_MAX_SHIFT", 8.0, 0.0, 50.0)
+TEMPORAL_OVERFETCH = max(5, int(os.environ.get("VAULT_TEMPORAL_OVERFETCH", "20")))
+TEMPORAL_MAX_SHIFT = _env_float("VAULT_TEMPORAL_MAX_SHIFT", 8.0, 0.0, 50.0)
 
-RERANK_GATE = _env_float("METALMIND_RERANK_GATE", 0.0, 0.0, 1.0)
+RERANK_GATE = _env_float("VAULT_RERANK_GATE", 0.0, 0.0, 1.0)
 
 _TEMPORAL_RECENT = re.compile(
     r"\b(most recent(ly)?|latest|newest|came after|nowadays)\b", re.IGNORECASE
@@ -368,11 +368,11 @@ def _folder_multiplier(file: str) -> float:
 # Measured on LongMemEval at 3000 sessions against the same index: uncapped and
 # cap 3 give hit@5 66%, cap 2 gives 67%, cap 1 gives 69%, with hit@1 unmoved at
 # 44% throughout. One chunk per note it is. 0 disables the cap.
-MAX_CHUNKS_PER_FILE = int(os.environ.get("METALMIND_MAX_CHUNKS_PER_FILE", "1"))
+MAX_CHUNKS_PER_FILE = int(os.environ.get("VAULT_MAX_CHUNKS_PER_FILE", "1"))
 
-CHUNK_IDENTITY = os.environ.get("METALMIND_CHUNK_IDENTITY", "1") != "0"
+CHUNK_IDENTITY = os.environ.get("VAULT_CHUNK_IDENTITY", "1") != "0"
 
-RRF_OVERFETCH = max(20, int(os.environ.get("METALMIND_RRF_OVERFETCH", "50")))
+RRF_OVERFETCH = max(20, int(os.environ.get("VAULT_RRF_OVERFETCH", "50")))
 
 WIKILINK = re.compile(r"\[\[([^\]|#]+)(?:[#|][^\]]*)?\]\]")
 
@@ -539,7 +539,7 @@ def _rrf_merge(
     destroying the agreement signal fusion exists to capture. Falling back to
     heading is what lets a stale index keep answering as it always did.
 
-    `METALMIND_CHUNK_IDENTITY=0` forces the heading key even when every hit
+    `VAULT_CHUNK_IDENTITY=0` forces the heading key even when every hit
     carries a position, reproducing pre-format-2 identity. Fusion is the only
     thing it changes, so an existing index can answer under either setting and
     the two are directly comparable without a rebuild.

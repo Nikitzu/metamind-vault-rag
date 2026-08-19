@@ -8,9 +8,9 @@ implementations:
   daemon running `nomic-embed-text` (768-dim).
 - `FastEmbedBackend` (v0.5.0 default): in-process ONNX via the
   fastembed wheel. Default model `BAAI/bge-small-en-v1.5` (384-dim,
-  ~30 MB cached at `~/.metalmind/cache/fastembed/`).
+  ~30 MB cached at `<state dir>/cache/fastembed/`).
 
-Selection happens once via `make_backend()` keyed on `METALMIND_BACKEND`
+Selection happens once via `make_backend()` keyed on `VAULT_BACKEND`
 - the same env var that picks the vector store. Backends and stores
 move in lockstep: legacy Qdrant + Ollama, embedded sqlite-vec +
 fastembed.
@@ -56,15 +56,15 @@ class EmbeddingBackend(Protocol):
 def make_backend() -> EmbeddingBackend:
     """Build the fastembed backend.
 
-    `METALMIND_BACKEND=legacy` selected a local Ollama daemon until
+    `VAULT_BACKEND=legacy` selected a local Ollama daemon until
     v0.16.0. The variable is still read so a stale export explains
     itself instead of silently changing which model embeds the vault -
     a mismatch that would poison the index rather than fail loudly.
     """
-    backend = os.environ.get("METALMIND_BACKEND", "embedded").lower()
+    backend = os.environ.get("VAULT_BACKEND", "embedded").lower()
     if backend == "legacy":
         raise ValueError(
-            "METALMIND_BACKEND=legacy selected the Ollama embedding backend, "
+            "VAULT_BACKEND=legacy selected the Ollama embedding backend, "
             "removed in v0.16.0. Unset the variable to use in-process "
             "fastembed."
         )
@@ -72,7 +72,7 @@ def make_backend() -> EmbeddingBackend:
         from .fastembed_backend import FastEmbedBackend  # type: ignore[attr-defined]
 
         return FastEmbedBackend()
-    raise ValueError(f"unknown METALMIND_BACKEND={backend!r}; valid: 'embedded'")
+    raise ValueError(f"unknown VAULT_BACKEND={backend!r}; valid: 'embedded'")
 
 
 __all__ = ["EmbeddingBackend", "make_backend"]

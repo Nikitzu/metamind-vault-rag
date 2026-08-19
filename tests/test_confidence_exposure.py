@@ -35,7 +35,7 @@ def calibrated(tmp_path, monkeypatch):
     path = tmp_path / "vault.calibration.json"
     monkeypatch.setattr(search, "embedding_backend", lambda: FakeBackend())
     monkeypatch.setattr(search, "sidecar_path", lambda collection: path)
-    monkeypatch.delenv("METALMIND_CONFIDENCE", raising=False)
+    monkeypatch.delenv("VAULT_CONFIDENCE", raising=False)
     calibration._BANDS_CACHE = None
     return path
 
@@ -75,7 +75,7 @@ class TestResultConfidence:
 
     def test_the_env_opt_out_reports_nothing(self, calibrated, monkeypatch):
         write_sidecar(calibrated, Bands(0.70, 0.64), EMBEDDER, positives_n=150, probes_n=67)
-        monkeypatch.setenv("METALMIND_CONFIDENCE", "0")
+        monkeypatch.setenv("VAULT_CONFIDENCE", "0")
 
         assert search.result_confidence(hits(0.85)) is None
 
@@ -124,7 +124,7 @@ class TestBandsCache:
 
 @pytest.fixture
 def server(monkeypatch):
-    monkeypatch.setenv("METALMIND_RECALL_REQUIRE_TOKEN", "0")
+    monkeypatch.setenv("VAULT_RECALL_REQUIRE_TOKEN", "0")
     monkeypatch.setattr(
         http_server.search, "search_vault", lambda q, k, rerank=False, mode="hybrid": hits(0.85)
     )

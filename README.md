@@ -27,12 +27,13 @@ uv tool install metamind-vault-rag
 | `VAULT_PATH` | Directory to index |
 | `VAULT_COLLECTION` | Collection name, which scopes the index files |
 | `VAULT_HTTP_PORT` | Port for the loopback search API |
+| `VAULT_STATE_DIR` | Where indexes, caches and logs are written. Defaults to `~/.vault-rag` |
 
-Indexes are written to `~/.metalmind/`, named after the collection, and are never placed inside the corpus.
+Indexes are written to the state directory, named after the collection, and are never placed inside the corpus. Two clients pointed at different collections, or different state directories, coexist on one machine without either knowing about the other.
 
 ## Consumers
 
-Built for [metalmind](https://github.com/Nikitzu/metalmind), and installed by any client that wants retrieval without running a service. The engine holds no opinion about who is asking.
+Installed by any client that wants retrieval without running a service. The engine holds no opinion about who is asking: it names no client in its output, its environment variables are all `VAULT_`-prefixed, and it writes nothing outside the state directory.
 
 ## Development
 

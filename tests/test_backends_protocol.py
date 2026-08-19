@@ -87,23 +87,23 @@ def test_dimension_is_stable(backend) -> None:
 
 
 def test_make_backend_legacy_explains_the_removal(monkeypatch: pytest.MonkeyPatch) -> None:
-    """A stale METALMIND_BACKEND=legacy export must fail loudly. Silently
+    """A stale VAULT_BACKEND=legacy export must fail loudly. Silently
     falling through to fastembed would re-embed the vault with a different
     model than the index was built with."""
-    monkeypatch.setenv("METALMIND_BACKEND", "legacy")
+    monkeypatch.setenv("VAULT_BACKEND", "legacy")
     with pytest.raises(ValueError, match="removed in v0.16.0"):
         make_backend()
 
 
 def test_make_backend_embedded_returns_fastembed(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("METALMIND_BACKEND", "embedded")
+    monkeypatch.setenv("VAULT_BACKEND", "embedded")
     instance = make_backend()
     assert isinstance(instance, FastEmbedBackend)
 
 
 def test_make_backend_rejects_unknown_value(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("METALMIND_BACKEND", "nonsense")
-    with pytest.raises(ValueError, match="unknown METALMIND_BACKEND"):
+    monkeypatch.setenv("VAULT_BACKEND", "nonsense")
+    with pytest.raises(ValueError, match="unknown VAULT_BACKEND"):
         make_backend()
 
 

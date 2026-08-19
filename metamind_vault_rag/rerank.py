@@ -8,7 +8,7 @@ Design (v0.5.x ONNX path - replaces the FlagEmbedding/torch path):
   Replaces them with ~60 MB of onnxruntime + tokenizers + hub.
 - Model: `onnx-community/bge-reranker-v2-m3-ONNX` (community ONNX export of BAAI's
   reranker-v2-m3, multi-lingual, ~150 MB quantized). Override with
-  `METALMIND_RERANKER_MODEL` if you want a different ONNX-exported repo.
+  `VAULT_RERANKER_MODEL` if you want a different ONNX-exported repo.
 - Overfetch strategy: caller asks for k, we ask the store for max(k*2, 10),
   re-score, return top k from the re-sorted list.
 - Batch shape is the whole cost. Scoring is one ONNX call over a
@@ -44,15 +44,15 @@ _SESSION: Any = None
 _TOKENIZER: Any = None
 _FAILED = False
 
-DEFAULT_MODEL = os.environ.get("METALMIND_RERANKER_MODEL", "onnx-community/bge-reranker-v2-m3-ONNX")
-DEFAULT_ONNX_FILE = os.environ.get("METALMIND_RERANKER_ONNX_FILE", "onnx/model_quantized.onnx")
-DEFAULT_OVERFETCH = max(1, int(os.environ.get("METALMIND_RERANK_OVERFETCH", "2")))
-DEFAULT_MAX_LENGTH = int(os.environ.get("METALMIND_RERANK_MAX_LEN", "256"))
-DEFAULT_MIN_CANDIDATES = max(1, int(os.environ.get("METALMIND_RERANK_MIN_CANDIDATES", "10")))
+DEFAULT_MODEL = os.environ.get("VAULT_RERANKER_MODEL", "onnx-community/bge-reranker-v2-m3-ONNX")
+DEFAULT_ONNX_FILE = os.environ.get("VAULT_RERANKER_ONNX_FILE", "onnx/model_quantized.onnx")
+DEFAULT_OVERFETCH = max(1, int(os.environ.get("VAULT_RERANK_OVERFETCH", "2")))
+DEFAULT_MAX_LENGTH = int(os.environ.get("VAULT_RERANK_MAX_LEN", "256"))
+DEFAULT_MIN_CANDIDATES = max(1, int(os.environ.get("VAULT_RERANK_MIN_CANDIDATES", "10")))
 
 RRF_K = 60
 RERANK_ALPHA = min(
-    1.0, max(0.0, float(os.environ.get("METALMIND_RERANK_ALPHA", "0.5")))
+    1.0, max(0.0, float(os.environ.get("VAULT_RERANK_ALPHA", "0.5")))
 )
 
 
@@ -61,7 +61,7 @@ def is_dep_available() -> bool:
 
     Does NOT trigger a model download - just tells the CLI whether the
     package has been installed with the `[rerank]` extra. Used by the
-    `/rerank/status` endpoint so `metalmind tap copper --rerank` can
+    `/rerank/status` endpoint so a client requesting reranking can
     auto-install + restart the watcher on first use instead of asking the
     user to run a weird `uv tool install ...` command by hand.
     """
@@ -95,19 +95,13 @@ def _load() -> tuple[Any, Any] | None:
     except ImportError as e:
         _FAILED = True
         print(
-            f"metalmind: --rerank requested but ONNX deps missing ({e}). "
+            f"vault-rag: --rerank requested but ONNX deps missing ({e}). "
             "Install with `uv tool install metamind-vault-rag[rerank]` or drop the flag.",
             file=sys.stderr,
         )
         return None
 
-    flavor = (os.environ.get("METALMIND_FLAVOR") or "classic").lower()
-    themed = flavor == "scadrial"
-    lead = (
-        "metalmind: lighting the duralumin - reranker warming up"
-        if themed
-        else "metalmind: reranker warming up"
-    )
+    lead = "vault-rag: reranker warming up"
     print(
         f"{lead} (first call downloads ~150 MB ONNX model from '{DEFAULT_MODEL}')…",
         file=sys.stderr,
@@ -120,7 +114,7 @@ def _load() -> tuple[Any, Any] | None:
     except Exception as e:  # pragma: no cover - network/disk issues
         _FAILED = True
         print(
-            f"metalmind: reranker model '{DEFAULT_MODEL}' failed to download ({e!r}); "
+            f"vault-rag: reranker model '{DEFAULT_MODEL}' failed to download ({e!r}); "
             "falling back to embedder ordering.",
             file=sys.stderr,
         )
@@ -131,7 +125,7 @@ def _load() -> tuple[Any, Any] | None:
         tokenizer.enable_truncation(max_length=DEFAULT_MAX_LENGTH)
         tokenizer.enable_padding()
         sess_options = onnxruntime.SessionOptions()
-        threads = int(os.environ.get("METALMIND_RERANK_THREADS", "0"))
+        threads = int(os.environ.get("VAULT_RERANK_THREADS", "0"))
         if threads > 0:
             sess_options.intra_op_num_threads = threads
         session = onnxruntime.InferenceSession(
@@ -142,7 +136,7 @@ def _load() -> tuple[Any, Any] | None:
     except Exception as e:  # pragma: no cover - corrupt model / OOM
         _FAILED = True
         print(
-            f"metalmind: reranker session/tokenizer init failed ({e!r}); "
+            f"vault-rag: reranker session/tokenizer init failed ({e!r}); "
             "falling back to embedder ordering.",
             file=sys.stderr,
         )

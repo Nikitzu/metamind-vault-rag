@@ -69,3 +69,19 @@ def test_no_module_hardcodes_a_state_directory() -> None:
             if '".vault-rag"' in line or "'.vault-rag'" in line:
                 offenders.append(f"{py.relative_to(root)}:{i}")
     assert offenders == [], f"hardcoded state dir: {offenders}"
+
+
+def test_no_module_names_a_client_in_user_facing_text() -> None:
+    """The engine has more than one client. Telling one of them to run
+    another's command sends a user to a binary they have not installed."""
+    root = pathlib.Path(__file__).resolve().parent.parent / "metamind_vault_rag"
+    allowed = {".metalmind-stack"}
+    offenders = []
+    for py in root.rglob("*.py"):
+        for i, line in enumerate(py.read_text().splitlines(), 1):
+            if "metalmind" not in line.lower():
+                continue
+            if any(token in line for token in allowed):
+                continue
+            offenders.append(f"{py.relative_to(root)}:{i}: {line.strip()}")
+    assert offenders == [], "client name in engine text:\n" + "\n".join(offenders)

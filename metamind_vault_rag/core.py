@@ -242,7 +242,7 @@ def note_title(file_rel: str) -> str:
     return stem.replace("-", " ").replace("_", " ").strip()
 
 
-EMBED_CONTEXT = os.environ.get("METALMIND_EMBED_CONTEXT", "1") != "0"
+EMBED_CONTEXT = os.environ.get("VAULT_EMBED_CONTEXT", "1") != "0"
 
 
 def embed_text(file_rel: str, heading: str, text: str) -> str:

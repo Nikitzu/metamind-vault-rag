@@ -1,7 +1,7 @@
 """Recall auth token: generation, validation, and the HTTP gate.
 
 Grace mode (default) serves tokenless requests with a warning so an updated
-watcher never breaks an older CLI; METALMIND_RECALL_REQUIRE_TOKEN=1 enforces.
+watcher never breaks an older CLI; VAULT_RECALL_REQUIRE_TOKEN=1 enforces.
 Browser-origin requests are rejected in both modes.
 """
 
@@ -19,7 +19,7 @@ from metamind_vault_rag import auth, http_server
 @pytest.fixture
 def token_file(tmp_path, monkeypatch):
     path = tmp_path / "recall-token"
-    monkeypatch.setenv("METALMIND_RECALL_TOKEN_PATH", str(path))
+    monkeypatch.setenv("VAULT_RECALL_TOKEN_PATH", str(path))
     return path
 
 
@@ -80,20 +80,20 @@ class TestHttpGate:
         assert "browser-origin" in body["error"]
 
     def test_optional_mode_serves_tokenless_requests(self, server, monkeypatch):
-        monkeypatch.delenv("METALMIND_RECALL_REQUIRE_TOKEN", raising=False)
+        monkeypatch.delenv("VAULT_RECALL_REQUIRE_TOKEN", raising=False)
         status, body = post(server, "/search", {"query": ""})
         assert status == 400
         assert body["error"] == "query is required"
 
     def test_enforced_mode_rejects_tokenless_requests(self, server, monkeypatch):
-        monkeypatch.setenv("METALMIND_RECALL_REQUIRE_TOKEN", "1")
+        monkeypatch.setenv("VAULT_RECALL_REQUIRE_TOKEN", "1")
         auth.ensure_token()
         status, body = post(server, "/search", {"query": "q"})
         assert status == 403
         assert auth.HEADER in body["error"]
 
     def test_enforced_mode_serves_with_valid_token(self, server, monkeypatch):
-        monkeypatch.setenv("METALMIND_RECALL_REQUIRE_TOKEN", "1")
+        monkeypatch.setenv("VAULT_RECALL_REQUIRE_TOKEN", "1")
         token = auth.ensure_token()
         status, body = post(server, "/search", {"query": ""}, {auth.HEADER: token})
         assert status == 400

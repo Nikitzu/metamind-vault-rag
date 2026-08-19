@@ -2,7 +2,7 @@
 in-process - no daemon, no HTTP. The default since v0.5.0.
 
 Default model is BAAI/bge-small-en-v1.5 (384-dim, ~30 MB). First call
-auto-downloads the ONNX weights to ~/.metalmind/cache/fastembed/ and
+auto-downloads the ONNX weights to <state dir>/cache/fastembed/ and
 caches them across processes; subsequent calls reuse the disk cache
 without network access. fastembed's own default lives in the system
 temp dir, which macOS purges periodically - that leaves a snapshot
@@ -83,7 +83,7 @@ def resolve_dim(model_name: str | None = None) -> int:
 
 def resolve_cache_dir() -> str:
     """Durable model cache location. FASTEMBED_CACHE_PATH wins so users
-    keep full control; otherwise ~/.metalmind/cache/fastembed."""
+    keep full control; otherwise <state dir>/cache/fastembed."""
     env = os.environ.get("FASTEMBED_CACHE_PATH")
     if env:
         return env

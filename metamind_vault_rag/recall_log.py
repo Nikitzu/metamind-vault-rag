@@ -1,6 +1,6 @@
-"""Append-only NDJSON log of recall queries. Opt-in via METALMIND_RECALL_LOG_PATH.
+"""Append-only NDJSON log of recall queries. Opt-in via VAULT_RECALL_LOG_PATH.
 
-Used by `metalmind doctor --recall-audit` to replay the last N days of queries,
+Used by the doctor's recall audit to replay the last N days of queries,
 flag zero-hit ones, and rank them as `/save` candidates. Local-only by design:
 the file lives on disk, never leaves the machine, and the CLI never reads it
 without the user explicitly invoking the audit subcommand.
@@ -29,7 +29,7 @@ def log_path() -> Path | None:
     """Return the configured log path, or None if logging is disabled."""
     global _path_cache, _path_resolved
     if not _path_resolved:
-        raw = os.environ.get("METALMIND_RECALL_LOG_PATH")
+        raw = os.environ.get("VAULT_RECALL_LOG_PATH")
         _path_cache = Path(raw).expanduser() if raw else None
         _path_resolved = True
     return _path_cache

@@ -15,7 +15,7 @@ from .index_format import FORMAT_VERSION, is_stale, read_stamp, stamp_path
 
 WIKILINK = re.compile(r"\[\[([^\]|#]+)(?:[#|][^\]]*)?\]\]")
 STALE_DAYS = 14
-STALE_VAULT_DAYS = int(os.environ.get("METALMIND_STALE_VAULT_DAYS", "90"))
+STALE_VAULT_DAYS = int(os.environ.get("VAULT_STALE_VAULT_DAYS", "90"))
 STALE_SKIP_TOP_DIRS = {"Archive", "Daily"}
 
 
@@ -89,11 +89,11 @@ def check_fts_index() -> None:
     print(f"  FTS5 rows:     {fts_rows}")
     if vec_points > 0 and fts_rows == 0:
         print("  WARN: FTS5 empty while vector store populated - hybrid search is running semantic-only.")
-        print("        Fix: restart the watcher (auto-backfills) or run `metalmind index rebuild`.")
+        print("        Fix: restart the watcher (auto-backfills) or rebuild the index.")
     elif vec_points > 0 and fts_rows < vec_points // 2:
         print(
             f"  WARN: FTS5 has {fts_rows} rows vs {vec_points} vector points "
-            "- significant drift. Consider `metalmind index rebuild`."
+            "- significant drift. Consider rebuilding the index."
         )
     else:
         print("  OK")
@@ -123,7 +123,7 @@ def check_index_format() -> None:
             f"  WARN: built in format {stamp.format_version} by {stamp.embedder}; "
             f"this release builds format {FORMAT_VERSION} with {embedder}."
         )
-        print("        Recall still works. Fix: `metalmind index rebuild`.")
+        print("        Recall still works. Fix: rebuild the index.")
     else:
         print("  OK")
 
@@ -212,7 +212,7 @@ def check_stale_vault() -> None:
         print(f"  [{age_days}d] {rel}{marker}")
     if recalled is None and entries:
         print("  (recall log disabled - cannot tell which of these are still being read)")
-    print(f"  ({len(entries)} stale notes - report only; archive with `metalmind gold <note>`)")
+    print(f"  ({len(entries)} stale notes - report only; archive them with your client)")
 
 
 def check_stale_inbox() -> None:

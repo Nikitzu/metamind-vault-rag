@@ -1,5 +1,5 @@
 """Watch the vault and re-embed changed markdown files (incremental upsert).
-Also hosts a loopback HTTP server so `metalmind tap copper` can bypass the
+Also hosts a loopback HTTP server so a client can bypass the
 per-call MCP stdio spawn cost.
 
 Batches burst saves within DEBOUNCE_SECONDS, then upserts only the changed
@@ -10,7 +10,7 @@ even when no files changed. Without that, a single save that landed inside the
 debounce window would sit unindexed until *some other* change re-entered the
 loop - the "lone-save starvation" bug.
 
-All stdout/stderr output is also tee'd to ``~/.metalmind/logs/watcher.log``
+All stdout/stderr output is also tee'd to ``<state dir>/logs/watcher.log``
 with rotation (5 MB × 3 backups) so the long-running watcher never fills the
 disk with unrotated log output.
 """
@@ -65,7 +65,7 @@ class _TeeStream:
     def write(self, msg: str) -> int:
         if msg and not msg.isspace():
             record = logging.LogRecord(
-                name="metalmind-watcher",
+                name="vault-rag-watcher",
                 level=logging.INFO,
                 pathname="",
                 lineno=0,
@@ -177,14 +177,14 @@ def _maybe_stamp_index() -> None:
             write_stamp(path, current_stamp(embedder, files=fts_file_count(), chunks=rows))
             return
     except Exception as e:
-        print(f"metalmind: could not read the index stamp ({e!r})", flush=True)
+        print(f"vault-rag: could not read the index stamp ({e!r})", flush=True)
         return
 
     if is_stale(stamp, embedder):
         print(
-            f"metalmind: this index was built in format {stamp.format_version} "
+            f"vault-rag: this index was built in format {stamp.format_version} "
             f"by {stamp.embedder}; this release builds format {FORMAT_VERSION} "
-            f"with {embedder}. Recall still works. Run `metalmind index rebuild` to update it.",
+            f"with {embedder}. Recall still works. Rebuild the index to update it.",
             flush=True,
         )
 
@@ -212,7 +212,7 @@ def _maybe_calibrate() -> None:
         if fts_row_count() == 0:
             return
     except Exception as e:
-        print(f"metalmind: confidence calibration skipped ({e!r})", flush=True)
+        print(f"vault-rag: confidence calibration skipped ({e!r})", flush=True)
         return
     print("calibrating confidence bands for this collection…", flush=True)
     run_calibration()

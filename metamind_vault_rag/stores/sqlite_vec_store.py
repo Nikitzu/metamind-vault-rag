@@ -2,7 +2,7 @@
 extension wheel. The default since v0.5.0 and the only store since
 v0.16.0, when the Qdrant backend was removed.
 
-Schema (one DB per collection at `~/.metalmind/vec-<col>.db`):
+Schema (one DB per collection at `<state dir>/vec-<col>.db`):
 
     CREATE VIRTUAL TABLE chunks USING vec0(
         embedding FLOAT[<dim>] distance_metric=cosine

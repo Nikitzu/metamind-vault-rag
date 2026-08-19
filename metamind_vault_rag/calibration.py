@@ -48,8 +48,8 @@ from datetime import datetime, timezone
 
 SIDECAR_VERSION = 1
 
-LOW_EDGE_PERCENTILE = float(os.environ.get("METALMIND_CONFIDENCE_LOW_PCT", "10"))
-HIGH_EDGE_PERCENTILE = float(os.environ.get("METALMIND_CONFIDENCE_HIGH_PCT", "95"))
+LOW_EDGE_PERCENTILE = float(os.environ.get("VAULT_CONFIDENCE_LOW_PCT", "10"))
+HIGH_EDGE_PERCENTILE = float(os.environ.get("VAULT_CONFIDENCE_HIGH_PCT", "95"))
 
 MIN_POSITIVE_SAMPLES = 50
 
@@ -322,7 +322,7 @@ def calibrate(
 def confidence_enabled() -> bool:
     """Read at call time rather than import time, so a watcher that has been
     running for days still honours the setting its user just changed."""
-    return os.environ.get("METALMIND_CONFIDENCE", "1") != "0"
+    return os.environ.get("VAULT_CONFIDENCE", "1") != "0"
 
 
 _BANDS_CACHE: tuple[pathlib.Path, float, str, Bands | None] | None = None
