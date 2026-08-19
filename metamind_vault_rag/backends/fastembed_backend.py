@@ -22,6 +22,8 @@ users who never recall.
 from __future__ import annotations
 
 import os
+
+from ..paths import state_dir
 from typing import Any
 
 
@@ -85,7 +87,7 @@ def resolve_cache_dir() -> str:
     env = os.environ.get("FASTEMBED_CACHE_PATH")
     if env:
         return env
-    return os.path.join(os.path.expanduser("~"), ".metalmind", "cache", "fastembed")
+    return str(state_dir() / "cache" / "fastembed")
 
 
 class FastEmbedBackend:

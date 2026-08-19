@@ -107,14 +107,16 @@ def test_make_backend_rejects_unknown_value(monkeypatch: pytest.MonkeyPatch) -> 
         make_backend()
 
 
-def test_cache_dir_defaults_to_metalmind_home(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Model cache must live under ~/.metalmind, not the system temp dir -
+def test_cache_dir_defaults_to_the_state_dir(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Model cache must live under the state directory, not the system temp dir -
     macOS purges temp files, leaving a broken half-cache (NO_SUCHFILE)."""
     from metamind_vault_rag.backends.fastembed_backend import resolve_cache_dir
 
     monkeypatch.delenv("FASTEMBED_CACHE_PATH", raising=False)
+    monkeypatch.delenv("VAULT_STATE_DIR", raising=False)
     monkeypatch.setenv("HOME", "/home/tester")
-    assert resolve_cache_dir() == "/home/tester/.metalmind/cache/fastembed"
+    monkeypatch.setattr("pathlib.Path.home", lambda: __import__("pathlib").Path("/home/tester"))
+    assert resolve_cache_dir() == "/home/tester/.vault-rag/cache/fastembed"
 
 
 def test_cache_dir_env_override_wins(monkeypatch: pytest.MonkeyPatch) -> None:

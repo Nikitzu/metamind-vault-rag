@@ -267,7 +267,7 @@ class TestSidecarPath:
         assert sidecar_path("vault").name == "vault.calibration.json"
 
     def test_sits_beside_the_index_databases(self):
-        assert sidecar_path("vault").parent.name == ".metalmind"
+        assert sidecar_path("vault").parent.name == ".vault-rag"
 
 
 SENTENCE = (

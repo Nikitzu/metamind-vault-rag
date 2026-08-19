@@ -6,6 +6,7 @@ import sqlite3
 import uuid
 
 from .backends import EmbeddingBackend, make_backend
+from .paths import state_dir
 from .sqlite_util import connect as sqlite_connect
 from .stores import VectorStore, make_store
 
@@ -24,7 +25,7 @@ _SEGMENT_SPLIT = re.compile(r"(?<=[.!?])\s+|\n\s*\n")
 FTS_DB_PATH = pathlib.Path(
     os.environ.get(
         "VAULT_FTS_DB_PATH",
-        str(pathlib.Path.home() / ".metalmind" / f"fts-{COLLECTION}.db"),
+        str(state_dir() / f"fts-{COLLECTION}.db"),
     )
 )
 

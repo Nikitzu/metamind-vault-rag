@@ -39,6 +39,8 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+
+from .paths import state_dir
 import random
 import re
 from dataclasses import dataclass
@@ -240,7 +242,7 @@ def embedder_id(model: str, dimension: int) -> str:
 def sidecar_path(collection: str) -> pathlib.Path:
     """Beside the index databases, not inside them. Keeping calibration out of
     the index schema means shipping it never forces a reindex."""
-    return pathlib.Path.home() / ".metalmind" / f"{collection}.calibration.json"
+    return state_dir() / f"{collection}.calibration.json"
 
 
 def write_sidecar(

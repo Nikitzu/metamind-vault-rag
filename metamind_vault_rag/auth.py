@@ -19,6 +19,8 @@ import os
 import secrets
 from pathlib import Path
 
+from .paths import state_dir
+
 HEADER = "X-Metalmind-Token"
 
 
@@ -26,7 +28,7 @@ def token_path() -> Path:
     raw = os.environ.get("METALMIND_RECALL_TOKEN_PATH")
     if raw:
         return Path(raw).expanduser()
-    return Path.home() / ".metalmind" / "recall-token"
+    return state_dir() / "recall-token"
 
 
 def ensure_token() -> str:

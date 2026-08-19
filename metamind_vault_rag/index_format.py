@@ -41,6 +41,8 @@ from __future__ import annotations
 
 import json
 import pathlib
+
+from .paths import state_dir
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 
@@ -97,7 +99,7 @@ def is_stale(stamp: IndexStamp | None, embedder: str) -> bool:
 
 
 def stamp_path(collection: str) -> pathlib.Path:
-    return pathlib.Path.home() / ".metalmind" / f"{collection}.index.json"
+    return state_dir() / f"{collection}.index.json"
 
 
 def write_stamp(path: pathlib.Path, stamp: IndexStamp) -> None:

@@ -162,7 +162,7 @@ class TestStampPath:
         assert stamp_path("vault").name == "vault.index.json"
 
     def test_sits_beside_the_index_databases(self):
-        assert stamp_path("vault").parent.name == ".metalmind"
+        assert stamp_path("vault").parent.name == ".vault-rag"
 
     def test_does_not_collide_with_the_calibration_sidecar(self):
         from metamind_vault_rag.calibration import sidecar_path

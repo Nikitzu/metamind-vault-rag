@@ -31,6 +31,8 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+
+from ..paths import state_dir
 import sqlite3
 import struct
 import threading
@@ -79,7 +81,7 @@ class SqliteVecStore:
         if db_path is None:
             db_path = os.environ.get(
                 "VAULT_VEC_DB_PATH",
-                str(pathlib.Path.home() / ".metalmind" / f"vec-{self._collection}.db"),
+                str(state_dir() / f"vec-{self._collection}.db"),
             )
         self._db_path = pathlib.Path(db_path)
         # Per-thread connections - sqlite3 forbids sharing a connection

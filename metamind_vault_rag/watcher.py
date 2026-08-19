@@ -21,6 +21,8 @@ import time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path, PurePath
 
+from .paths import state_dir
+
 from watchfiles import watch
 
 from . import http_server
@@ -47,7 +49,7 @@ from .indexer import reindex_all, reindex_paths, run_calibration
 
 DEBOUNCE_SECONDS = 2.0
 TICK_MS = 1_000  # watch() heartbeat → worst-case flush latency = DEBOUNCE + TICK
-LOG_DIR = Path.home() / ".metalmind" / "logs"
+LOG_DIR = state_dir() / "logs"
 LOG_MAX_BYTES = 5_000_000
 LOG_BACKUPS = 3
 
