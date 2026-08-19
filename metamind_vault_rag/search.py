@@ -21,6 +21,7 @@ from .core import (
     vector_store,
 )
 from .rerank import overfetch_k, rerank_hits
+from .paths import vault_relative
 
 # RRF k=60 is the standard from Cormack/Clarke/Büttcher (SIGIR 2009); higher
 # k flattens the fusion (all ranks contribute more equally), lower k amplifies
@@ -147,7 +148,7 @@ def _supersede_index() -> dict[str, str]:
         by = re.search(r"^superseded_by:[ \t]*(\S.*)$", block, re.MULTILINE)
         if not by and not (status and status.group(1).strip() == "superseded"):
             continue
-        smap[str(p.relative_to(VAULT))] = by.group(1).strip().strip("'\"") if by else ""
+        smap[vault_relative(p, VAULT)] = by.group(1).strip().strip("'\"") if by else ""
 
     _SUPERSEDE_CACHE = smap
     _SUPERSEDE_KEY = key
@@ -255,7 +256,7 @@ def _note_dates() -> dict[str, str]:
             head = p.read_text(encoding="utf-8", errors="ignore")[:8192]
         except OSError:
             continue
-        rel = str(p.relative_to(VAULT))
+        rel = vault_relative(p, VAULT)
         found = _DATE_IN_FRONTMATTER.findall(head)
         if found:
             dates[rel] = max(found)
@@ -747,7 +748,7 @@ def related_notes(file: str) -> dict:
     text = path.read_text(encoding="utf-8", errors="ignore")
     forward_stems = parse_links(text)
     forward = [
-        {"stem": s, "path": str(index[s].relative_to(VAULT))}
+        {"stem": s, "path": vault_relative(index[s], VAULT)}
         for s in forward_stems
         if s in index
     ]
@@ -756,13 +757,13 @@ def related_notes(file: str) -> dict:
     target_stem = path.stem
     backlink_map = _backlink_index()
     backlinks = [
-        {"stem": s, "path": str(index[s].relative_to(VAULT))}
+        {"stem": s, "path": vault_relative(index[s], VAULT)}
         for s in backlink_map.get(target_stem, [])
         if s in index
     ]
 
     return {
-        "file": str(path.relative_to(VAULT)),
+        "file": vault_relative(path, VAULT),
         "forward": forward,
         "backlinks": backlinks,
         "missing_forward": missing_forward,
@@ -787,7 +788,7 @@ def expand_search(query: str, k: int = 5) -> dict:
             continue
         links = parse_links(path.read_text(encoding="utf-8", errors="ignore"))
         resolved = [
-            {"stem": s, "path": str(index[s].relative_to(VAULT))}
+            {"stem": s, "path": vault_relative(index[s], VAULT)}
             for s in links
             if s in index
         ]

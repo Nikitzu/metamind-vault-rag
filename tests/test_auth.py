@@ -7,6 +7,7 @@ Browser-origin requests are rejected in both modes.
 
 import json
 import stat
+import sys
 import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
@@ -24,11 +25,21 @@ def token_file(tmp_path, monkeypatch):
 
 
 class TestTokenFile:
-    def test_ensure_creates_0600_and_is_stable(self, token_file):
+    def test_ensure_is_stable(self, token_file):
         first = auth.ensure_token()
-        mode = stat.S_IMODE(token_file.stat().st_mode)
-        assert mode == 0o600
         assert auth.ensure_token() == first
+
+    @pytest.mark.skipif(
+        sys.platform == "win32",
+        reason=(
+            "Windows has no POSIX file mode. chmod cannot restrict a file to its "
+            "owner there, so the token is protected by the ACL on the user profile "
+            "directory instead. Asserting 0600 would test nothing."
+        ),
+    )
+    def test_ensure_creates_the_token_readable_only_by_its_owner(self, token_file):
+        auth.ensure_token()
+        assert stat.S_IMODE(token_file.stat().st_mode) == 0o600
 
     def test_is_valid_accepts_only_the_stored_token(self, token_file):
         token = auth.ensure_token()

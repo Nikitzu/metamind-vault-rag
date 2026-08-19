@@ -22,13 +22,14 @@ from .calibration import (
 )
 from .index_format import current_stamp, stamp_path, write_stamp
 from .stores import VectorPoint
+from .paths import vault_relative
 
 
 def _chunk_file(path: Path) -> tuple[str, list[tuple[str, str]]]:
     """Return (relative-path, chunks). Split out so FTS writes and vector
     writes share the same chunk list - ensures per-chunk parity between
     the two retrievers."""
-    rel = str(path.relative_to(VAULT))
+    rel = vault_relative(path, VAULT)
     text = path.read_text(encoding="utf-8", errors="ignore")
     chunks = chunk_markdown(text)
     return rel, chunks
@@ -192,7 +193,7 @@ def reindex_paths(paths: list[Path]) -> int:
     deleted = 0
     with fts_conn() as fts:
         for p in paths:
-            rel = str(p.relative_to(VAULT)) if p.is_absolute() else str(p)
+            rel = vault_relative(p, VAULT) if p.is_absolute() else p.as_posix()
             abs_path = p if p.is_absolute() else VAULT / p
             if in_skip_dir(Path(rel)) or not abs_path.exists():
                 store.delete_by_file(rel)

@@ -114,9 +114,15 @@ def test_cache_dir_defaults_to_the_state_dir(monkeypatch: pytest.MonkeyPatch) ->
 
     monkeypatch.delenv("FASTEMBED_CACHE_PATH", raising=False)
     monkeypatch.delenv("VAULT_STATE_DIR", raising=False)
-    monkeypatch.setenv("HOME", "/home/tester")
-    monkeypatch.setattr("pathlib.Path.home", lambda: __import__("pathlib").Path("/home/tester"))
-    assert resolve_cache_dir() == "/home/tester/.vault-rag/cache/fastembed"
+    import pathlib
+
+    home = pathlib.Path("/home/tester")
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setattr("pathlib.Path.home", lambda: home)
+    # Built with the platform's own separator: this path is a filesystem
+    # location, not something written into the index, so it is correct for it
+    # to look native.
+    assert resolve_cache_dir() == str(home / ".vault-rag" / "cache" / "fastembed")
 
 
 def test_cache_dir_env_override_wins(monkeypatch: pytest.MonkeyPatch) -> None:
