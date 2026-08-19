@@ -65,6 +65,27 @@ def _pack_vector(vec: list[float], dim: int) -> bytes:
     return struct.pack(f"{dim}f", *vec)
 
 
+def extensions_supported() -> bool:
+    """Whether this interpreter can load a SQLite extension at all.
+
+    Python can be compiled with --disable-loadable-sqlite-extensions, and some
+    distributions and the macOS system build do exactly that. The vector store
+    is a SQLite extension, so on such an interpreter it cannot work.
+    """
+    return hasattr(sqlite3.Connection, "enable_load_extension")
+
+
+def require_extension_support() -> None:
+    if extensions_supported():
+        return
+    raise RuntimeError(
+        "this Python cannot load SQLite extensions, which the vector store "
+        "needs. It was built with --disable-loadable-sqlite-extensions. Use a "
+        "Python that supports them, for example one installed by `uv python "
+        "install`, rather than a system build."
+    )
+
+
 class SqliteVecStore:
     """In-process vec0 store. Owns a single sqlite3 connection - vec0 is
     safe for concurrent reads from one connection, and the watcher is
@@ -92,27 +113,6 @@ class SqliteVecStore:
         # Bumped by delete_collection so other threads notice the file
         # was unlinked and reopen against the fresh path on next use.
         self._epoch = 0
-
-def extensions_supported() -> bool:
-    """Whether this interpreter can load a SQLite extension at all.
-
-    Python can be compiled with --disable-loadable-sqlite-extensions, and some
-    distributions and the macOS system build do exactly that. The vector store
-    is a SQLite extension, so on such an interpreter it cannot work.
-    """
-    return hasattr(sqlite3.Connection, "enable_load_extension")
-
-
-def require_extension_support() -> None:
-    if extensions_supported():
-        return
-    raise RuntimeError(
-        "this Python cannot load SQLite extensions, which the vector store "
-        "needs. It was built with --disable-loadable-sqlite-extensions. Use a "
-        "Python that supports them, for example one installed by `uv python "
-        "install`, rather than a system build."
-    )
-
 
     # --- connection lifecycle ------------------------------------------------
 
