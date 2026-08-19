@@ -1,5 +1,10 @@
 name: Publish
 
+# Two jobs on purpose. Everything that can say no runs first, with no
+# environment attached, so a reviewer approves against green checks rather than
+# against an intention. Only the upload sits behind the gate, and it uploads
+# exactly what the first job built.
+
 on:
   push:
     tags:
@@ -15,12 +20,13 @@ permissions:
   contents: read
 
 jobs:
-  publish:
+  verify:
+    name: Verify and build
     runs-on: ubuntu-latest
-    environment: pypi
     permissions:
-      id-token: write
       contents: read
+    outputs:
+      version: ${{ steps.version.outputs.value }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -60,6 +66,35 @@ jobs:
       - name: Check distribution metadata
         run: uv run --with twine twine check dist/*
 
+      - name: Keep the artifacts for the publish job
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish to PyPI
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/') && inputs.dry_run != true
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Take the artifacts the verify job built
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      # Nothing is rebuilt here. What was checked is what is uploaded.
       - name: Publish
-        if: startsWith(github.ref, 'refs/tags/') && inputs.dry_run != true
         run: uv publish --trusted-publishing always
+
+      - name: Say what landed
+        run: echo "::notice::published metamind-vault-rag ${{ needs.verify.outputs.version }}"
