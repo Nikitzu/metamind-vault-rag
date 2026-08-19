@@ -27,3 +27,22 @@ def test_md_change_ignores_trash_moves() -> None:
     assert not _md_change("/vault/.obsidian/anything.md")
     assert not _md_change("/vault/Plans/live-note.txt")
     assert _md_change("/vault/Plans/live-note.md")
+
+
+def test_skip_dirs_cover_a_repository_corpus() -> None:
+    """A corpus is often a git repository, which carries markdown that is not
+    corpus. A dependency's README says nothing about the project holding it,
+    and there are typically ten times more of them than real documents."""
+    for name in ("node_modules", ".git", "dist", "build", "target", "vendor"):
+        assert name in SKIP_DIRS
+
+
+def test_a_dependency_readme_is_not_indexed() -> None:
+    assert in_skip_dir(PurePath("node_modules/commander/README.md"))
+    assert in_skip_dir(PurePath("/work/knowledge/node_modules/zod/README.md"))
+    assert in_skip_dir(PurePath("target/generated-docs/api.md"))
+
+
+def test_a_document_that_merely_mentions_a_skipped_name_is_kept() -> None:
+    assert not in_skip_dir(PurePath("systems/node_modules-hygiene.md"))
+    assert not in_skip_dir(PurePath("decisions/how-we-build-dist-artifacts.md"))

@@ -144,7 +144,29 @@ def chunk_markdown(text: str) -> list[tuple[str, str]]:
     return final
 
 
-SKIP_DIRS = frozenset({".obsidian", ".metalmind-stack", ".trash"})
+# A corpus is often a git repository rather than a note vault, and a repository
+# carries markdown that is not corpus: a dependency's README says nothing about
+# the project holding it, and there are typically ten times more of them than
+# real documents. Indexing those does not fail, it dilutes every result.
+SKIP_DIRS = frozenset(
+    {
+        ".obsidian",
+        ".metalmind-stack",
+        ".trash",
+        ".git",
+        "node_modules",
+        "vendor",
+        "dist",
+        "build",
+        "target",
+        "__pycache__",
+        ".venv",
+        "venv",
+        ".next",
+        ".turbo",
+        "coverage",
+    }
+)
 
 
 def in_skip_dir(path: pathlib.PurePath) -> bool:
