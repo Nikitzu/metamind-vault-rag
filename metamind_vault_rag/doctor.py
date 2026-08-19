@@ -197,8 +197,12 @@ def collect_stale_vault(
         if mtime >= cutoff:
             continue
         age_days = int((time.time() - mtime) / 86400)
-        never_recalled = recalled is not None and str(rel) not in recalled
-        out.append((age_days, str(rel), never_recalled))
+        # Not display: this is matched against the recall log, whose paths come
+        # out of the index and are forward-slashed. A native separator here
+        # makes every note look never-recalled on Windows.
+        key = rel.as_posix()
+        never_recalled = recalled is not None and key not in recalled
+        out.append((age_days, key, never_recalled))
     out.sort(reverse=True)
     return out
 
