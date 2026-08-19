@@ -1,12 +1,27 @@
 name: CI
 
+# Three operating systems, because the engine is installed on developer
+# machines rather than only in continuous integration.
+#
+# UV_PYTHON_PREFERENCE is load-bearing on macOS. Left to choose, uv picks the
+# system Python there, which is built with --disable-loadable-sqlite-extensions
+# and therefore cannot load the vector store at all. A managed interpreter is
+# also what a developer following the README ends up with.
+
 on:
   push:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
+
+env:
+  UV_PYTHON_PREFERENCE: only-managed
 
 jobs:
   test:
@@ -15,11 +30,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python: ['3.11', '3.13']
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
+      - name: Install the interpreter
+        run: uv python install ${{ matrix.python }}
       - name: Run the suite
         run: uv run --python ${{ matrix.python }} --extra dev pytest -q
 

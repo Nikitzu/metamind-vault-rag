@@ -93,6 +93,27 @@ class SqliteVecStore:
         # was unlinked and reopen against the fresh path on next use.
         self._epoch = 0
 
+def extensions_supported() -> bool:
+    """Whether this interpreter can load a SQLite extension at all.
+
+    Python can be compiled with --disable-loadable-sqlite-extensions, and some
+    distributions and the macOS system build do exactly that. The vector store
+    is a SQLite extension, so on such an interpreter it cannot work.
+    """
+    return hasattr(sqlite3.Connection, "enable_load_extension")
+
+
+def require_extension_support() -> None:
+    if extensions_supported():
+        return
+    raise RuntimeError(
+        "this Python cannot load SQLite extensions, which the vector store "
+        "needs. It was built with --disable-loadable-sqlite-extensions. Use a "
+        "Python that supports them, for example one installed by `uv python "
+        "install`, rather than a system build."
+    )
+
+
     # --- connection lifecycle ------------------------------------------------
 
     def _open(self) -> sqlite3.Connection:
@@ -107,6 +128,7 @@ class SqliteVecStore:
                 pass
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite_connect(str(self._db_path))
+        require_extension_support()
         conn.enable_load_extension(True)
         sqlite_vec.load(conn)
         conn.enable_load_extension(False)
