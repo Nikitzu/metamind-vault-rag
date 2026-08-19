@@ -56,6 +56,7 @@ metamind-vault-rag-watcher = "metamind_vault_rag.watcher:main"
 metamind-vault-rag-indexer = "metamind_vault_rag.indexer:main"
 metamind-vault-rag-doctor = "metamind_vault_rag.doctor:main"
 metamind-vault-rag-http = "metamind_vault_rag.http_server:main"
+metamind-vault-rag-query = "metamind_vault_rag.query:main"
 
 [project.urls]
 Source = "https://github.com/Nikitzu/metamind-vault-rag"
